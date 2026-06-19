@@ -1,0 +1,6 @@
+# Runtime dependencies ONLY. After `pip install -r requirements.txt` the dashboard runs
+# with nothing but Python (no Node, no build step, no cloud services, no database server).
+# All charts, diagrams, screenshots and report.html are pre-generated and committed, so
+# none of the heavier dev/visualisation tools below are needed just to run or view the app.
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.29,<1.0

@@ -1,0 +1,17 @@
+# Developer / regeneration dependencies. NOT required to run or view the project — only to
+# run the test suite, the linters, and to regenerate the committed artifacts (charts,
+# diagrams, screenshots, report.html).
+-r requirements.txt
+
+# Testing
+pytest>=8.0
+hypothesis>=6.100      # property-based tests for the optimizer's invariants
+httpx>=0.27            # FastAPI TestClient transport for API integration tests
+
+# Quality gates
+ruff>=0.4
+mypy>=1.10
+
+# Artifact generation
+matplotlib>=3.8        # benchmark charts (PNG/SVG)
+playwright>=1.44       # real headless-Chromium screenshots of the running dashboard

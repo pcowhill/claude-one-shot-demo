@@ -1,0 +1,93 @@
+[project]
+name = "allocation-engine"
+version = "1.0.0"
+description = "Event-driven resource-allocation engine with a live operations dashboard (synthetic-data flagship demo)."
+requires-python = ">=3.11"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Roster-5 Software flagship demo" }]
+
+# Runtime dependencies live in requirements.txt so the app runs with `pip install -r
+# requirements.txt`. This table mirrors the runtime set for tooling that reads pyproject.
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+# --------------------------------------------------------------------------------------
+# Ruff: linting + import sorting. We keep a strict-but-pragmatic rule set.
+# --------------------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = ["build", "dist", ".venv", "artifacts"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "F",    # pyflakes
+    "I",    # isort
+    "UP",   # pyupgrade
+    "B",    # flake8-bugbear
+    "SIM",  # flake8-simplify
+    "C4",   # flake8-comprehensions
+    "RUF",  # ruff-specific
+    "PL",   # pylint subset
+    "PERF", # perflint
+]
+ignore = [
+    "PLR0913", # "too many arguments" — domain constructors are legitimately wide.
+    "PLR2004", # "magic value" — explicit constants in tests/benchmarks read clearly.
+    "PLR0912", # "too many branches" — the optimizer's move loop is intentionally explicit.
+    "PLR0915", # "too many statements" — ditto for a few orchestration functions.
+    "PLR0911", # "too many return statements" — feasibility guards return early on purpose.
+    "UP042",   # we deliberately use `(str, Enum)` for stable JSON values + isinstance compat.
+    "RUF001",  # intentional Unicode (≥ → Σ × — “”) in display strings reads better than ASCII.
+    "RUF002",  # ditto inside docstrings.
+    "RUF003",  # ditto inside comments.
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["PLR2004", "S101"]
+# Artifact generators build SVG / HTML / chart strings whose long string literals are clearer
+# left intact than wrapped; line-length is still enforced across app/ and tests/.
+"benchmarks/*" = ["PLR2004", "E501"]
+"diagrams/*" = ["E501"]
+"scripts/*" = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["app"]
+
+# --------------------------------------------------------------------------------------
+# mypy: strict typing for the application package. Third-party libs without stubs are
+# narrowly exempted so the core stays fully type-checked.
+# --------------------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_unreachable = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+no_implicit_reexport = true
+files = ["app"]
+
+[[tool.mypy.overrides]]
+module = ["matplotlib.*", "playwright.*", "uvicorn.*"]
+ignore_missing_imports = true
+
+# --------------------------------------------------------------------------------------
+# pytest
+# --------------------------------------------------------------------------------------
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+pythonpath = ["."]
+filterwarnings = ["error::DeprecationWarning"]
