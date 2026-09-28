@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Roster-5 · Live Allocation Engine</title>
+  <link rel="stylesheet" href="/static/css/app.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b0f17'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='15' font-weight='bold' fill='%234cc9f0' text-anchor='middle'%3ER5%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <!-- ===================== Header ===================== -->
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-badge" viewBox="0 0 40 40" aria-hidden="true">
+        <path d="M20 2 L35 11 V29 L20 38 L5 29 V11 Z" fill="#0e1622" stroke="#2a3a52" stroke-width="1.5"/>
+        <text x="20" y="25" text-anchor="middle" class="brand-badge-text">R5</text>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-title">Iterated Distributed Feedback <span class="brand-sub">· Live Allocation Engine</span></div>
+        <div class="brand-tag">Event-driven resource allocation · synthetic demonstration</div>
+      </div>
+    </div>
+
+    <div class="clock-block">
+      <div class="clock-label">MISSION CLOCK</div>
+      <div class="clock-time" id="clock">T+00:00</div>
+      <div class="clock-bar"><div class="clock-bar-fill" id="clock-bar"></div></div>
+    </div>
+
+    <div class="controls">
+      <div class="mode-switch" id="mode-switch" role="group" aria-label="Operating mode">
+        <button class="mode-btn" data-mode="AUTOMATED" title="Fully automated closed loop">Automated</button>
+        <button class="mode-btn" data-mode="MANUAL" title="Human-in-the-loop: approve every plan">Human-in-loop</button>
+        <button class="mode-btn" data-mode="HYBRID" title="Automated with human exceptions">Hybrid</button>
+      </div>
+      <div class="playback">
+        <button id="btn-play" class="pb-btn" title="Play / pause">▶</button>
+        <button id="btn-step" class="pb-btn" title="Step forward">⏭</button>
+        <button id="btn-reset" class="pb-btn" title="Restart scenario">↺</button>
+        <select id="speed" class="speed" title="Playback speed">
+          <option value="slow">0.5×</option>
+          <option value="normal" selected>1×</option>
+          <option value="fast">2×</option>
+          <option value="turbo">4×</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== KPI strip ===================== -->
+  <section class="kpis" id="kpis">
+    <div class="kpi kpi-hero">
+      <div class="kpi-label">MISSION VALUE DELIVERED</div>
+      <div class="kpi-value"><span id="kpi-value">0</span><span class="kpi-uplift" id="kpi-uplift">—</span></div>
+      <div class="kpi-compare">
+        <div class="compare-row"><span class="dot dot-opt"></span>Optimizer <b id="kpi-opt">0</b></div>
+        <div class="compare-row"><span class="dot dot-base"></span>FIFO baseline <b id="kpi-base">0</b></div>
+        <div class="compare-bars"><div class="bar bar-opt" id="bar-opt"></div><div class="bar bar-base" id="bar-base"></div></div>
+      </div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">VALUE CAPTURE</div>
+      <div class="kpi-value"><span id="kpi-capture">0</span><span class="unit">%</span></div>
+      <div class="kpi-foot">of all available mission value</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">TASKINGS SERVED</div>
+      <div class="kpi-value"><span id="kpi-served">0</span></div>
+      <div class="kpi-foot" id="kpi-served-foot">of 0 revealed</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">MEAN ASSET UTILIZATION</div>
+      <div class="kpi-value"><span id="kpi-util">0</span><span class="unit">%</span></div>
+      <div class="kpi-foot">across the fleet</div>
+    </div>
+    <div class="kpi kpi-shield">
+      <div class="kpi-label">◆ HIGH-PRIORITY PROTECTED</div>
+      <div class="kpi-value"><span id="kpi-flash">0/0</span></div>
+      <div class="kpi-foot">FLASH + IMMEDIATE taskings</div>
+    </div>
+  </section>
+
+  <!-- ===================== Proposal banner (MANUAL) ===================== -->
+  <div class="proposal-banner hidden" id="proposal-banner">
+    <span class="proposal-pulse"></span>
+    <span id="proposal-text">A re-optimized plan is awaiting your approval.</span>
+    <div class="proposal-actions">
+      <button class="btn btn-approve" id="btn-approve">Approve plan</button>
+      <button class="btn btn-ghost" id="btn-reject">Discard</button>
+    </div>
+  </div>
+
+  <!-- ===================== Main grid ===================== -->
+  <main class="grid">
+    <!-- Left: event stream + pending -->
+    <section class="panel panel-left">
+      <div class="panel-head">EVENT STREAM</div>
+      <div class="event-stream" id="event-stream"></div>
+      <div class="panel-head panel-head-split">UNSCHEDULED QUEUE <span class="count-badge" id="pending-count">0</span></div>
+      <div class="pending-list" id="pending-list"></div>
+    </section>
+
+    <!-- Center: Gantt timeline -->
+    <section class="panel panel-center">
+      <div class="panel-head">
+        ALLOCATION TIMELINE
+        <span class="legend" id="legend">
+          <span class="lg"><i class="sw sw-flash"></i>FLASH</span>
+          <span class="lg"><i class="sw sw-immediate"></i>IMMEDIATE</span>
+          <span class="lg"><i class="sw sw-priority"></i>PRIORITY</span>
+          <span class="lg"><i class="sw sw-routine"></i>ROUTINE</span>
+          <span class="lg lg-sep"><i class="sw" style="border:1.5px dashed #fff;background:transparent"></i>locked</span>
+        </span>
+      </div>
+      <div class="gantt-wrap" id="gantt-wrap">
+        <svg id="gantt" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+      <div class="selection-bar hidden" id="selection-bar">
+        <div class="sel-info" id="sel-info">No tasking selected</div>
+        <div class="sel-actions" id="sel-actions"></div>
+      </div>
+    </section>
+
+    <!-- Right: utilization + priority + optimizer + flags -->
+    <section class="panel panel-right">
+      <div class="panel-head">RESOURCE UTILIZATION</div>
+      <div class="util-list" id="util-list"></div>
+
+      <div class="panel-head">PRIORITY PROTECTION</div>
+      <div class="prio-list" id="prio-list"></div>
+
+      <div class="panel-head">OPTIMIZER</div>
+      <div class="opt-stats" id="opt-stats">
+        <div class="opt-row"><span>Search passes</span><b id="opt-passes">0</b></div>
+        <div class="opt-row"><span>Moves applied</span><b id="opt-moves">0</b></div>
+        <div class="opt-row"><span>Solve time</span><b id="opt-time">0 ms</b></div>
+        <div class="opt-row"><span>Offline headroom</span><b id="opt-offline">—</b></div>
+        <svg id="convergence" class="convergence" xmlns="http://www.w3.org/2000/svg"></svg>
+      </div>
+
+      <div class="panel-head" id="flags-head">EXCEPTIONS</div>
+      <div class="flags-list" id="flags-list"><div class="flags-empty">No exceptions flagged.</div></div>
+    </section>
+  </main>
+
+  <footer class="footnote">
+    Synthetic, unclassified demonstration · an independent homage to Roster-5 Software's
+    “Iterated Distributed Feedback” · no proprietary or classified data.
+  </footer>
+
+  <div class="tooltip hidden" id="tooltip"></div>
+
+  <script src="/static/js/gantt.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

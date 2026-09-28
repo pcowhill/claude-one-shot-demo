@@ -1,0 +1,200 @@
+{
+  "generated": "2026-06-19T02:48:17+00:00",
+  "summary": {
+    "total_scenarios": 6,
+    "mean_offline_uplift_pct": 30.8,
+    "max_offline_uplift_pct": 56.1,
+    "mean_online_uplift_pct": 10.8,
+    "max_online_uplift_pct": 17.9
+  },
+  "scenarios": [
+    {
+      "name": "Light load",
+      "n_requests": 60,
+      "n_resources": 6,
+      "horizon": 480,
+      "possible_value": 1875.3,
+      "fifo_value": 1293.3,
+      "priority_value": 1444.5,
+      "optimizer_value": 1467.7,
+      "offline_uplift_pct": 13.5,
+      "online_optimizer_value": 1548.8,
+      "online_fifo_value": 1547.1,
+      "online_uplift_pct": 0.1,
+      "fifo_capture_pct": 69.0,
+      "optimizer_capture_pct": 78.3,
+      "optimizer_elapsed_ms": 59.6,
+      "passes": 49,
+      "moves": 75
+    },
+    {
+      "name": "Nominal",
+      "n_requests": 84,
+      "n_resources": 6,
+      "horizon": 480,
+      "possible_value": 2617.2,
+      "fifo_value": 1833.9,
+      "priority_value": 2025.1,
+      "optimizer_value": 2160.9,
+      "offline_uplift_pct": 17.8,
+      "online_optimizer_value": 2085.5,
+      "online_fifo_value": 1913.7,
+      "online_uplift_pct": 9.0,
+      "fifo_capture_pct": 70.1,
+      "optimizer_capture_pct": 82.6,
+      "optimizer_elapsed_ms": 112.2,
+      "passes": 51,
+      "moves": 80
+    },
+    {
+      "name": "Heavy load",
+      "n_requests": 110,
+      "n_resources": 6,
+      "horizon": 480,
+      "possible_value": 3743.0,
+      "fifo_value": 2225.7,
+      "priority_value": 2800.0,
+      "optimizer_value": 2800.0,
+      "offline_uplift_pct": 25.8,
+      "online_optimizer_value": 2572.0,
+      "online_fifo_value": 2211.7,
+      "online_uplift_pct": 16.3,
+      "fifo_capture_pct": 59.5,
+      "optimizer_capture_pct": 74.8,
+      "optimizer_elapsed_ms": 173.8,
+      "passes": 49,
+      "moves": 76
+    },
+    {
+      "name": "Surge",
+      "n_requests": 140,
+      "n_resources": 7,
+      "horizon": 480,
+      "possible_value": 4070.0,
+      "fifo_value": 1830.4,
+      "priority_value": 2831.6,
+      "optimizer_value": 2857.5,
+      "offline_uplift_pct": 56.1,
+      "online_optimizer_value": 2176.1,
+      "online_fifo_value": 1893.4,
+      "online_uplift_pct": 14.9,
+      "fifo_capture_pct": 45.0,
+      "optimizer_capture_pct": 70.2,
+      "optimizer_elapsed_ms": 307.1,
+      "passes": 49,
+      "moves": 79
+    },
+    {
+      "name": "Constrained fleet",
+      "n_requests": 90,
+      "n_resources": 4,
+      "horizon": 480,
+      "possible_value": 2843.9,
+      "fifo_value": 1440.4,
+      "priority_value": 1870.7,
+      "optimizer_value": 1881.6,
+      "offline_uplift_pct": 30.6,
+      "online_optimizer_value": 1740.4,
+      "online_fifo_value": 1475.8,
+      "online_uplift_pct": 17.9,
+      "fifo_capture_pct": 50.6,
+      "optimizer_capture_pct": 66.2,
+      "optimizer_elapsed_ms": 176.8,
+      "passes": 50,
+      "moves": 76
+    },
+    {
+      "name": "Wide fleet",
+      "n_requests": 190,
+      "n_resources": 9,
+      "horizon": 480,
+      "possible_value": 6945.4,
+      "fifo_value": 3482.2,
+      "priority_value": 4859.2,
+      "optimizer_value": 4904.5,
+      "offline_uplift_pct": 40.8,
+      "online_optimizer_value": 3778.6,
+      "online_fifo_value": 3534.8,
+      "online_uplift_pct": 6.9,
+      "fifo_capture_pct": 50.1,
+      "optimizer_capture_pct": 70.6,
+      "optimizer_elapsed_ms": 529.8,
+      "passes": 50,
+      "moves": 87
+    }
+  ],
+  "priority_protection": {
+    "optimizer": {
+      "ROUTINE": [
+        83,
+        293
+      ],
+      "PRIORITY": [
+        119,
+        213
+      ],
+      "IMMEDIATE": [
+        91,
+        114
+      ],
+      "FLASH": [
+        52,
+        54
+      ]
+    },
+    "fifo": {
+      "ROUTINE": [
+        166,
+        293
+      ],
+      "PRIORITY": [
+        113,
+        213
+      ],
+      "IMMEDIATE": [
+        57,
+        114
+      ],
+      "FLASH": [
+        32,
+        54
+      ]
+    }
+  },
+  "convergence": {
+    "scenario": "Nominal",
+    "history": [
+      2107.9,
+      2160.8,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9,
+      2160.9
+    ],
+    "baseline": 1833.9,
+    "seed": 2107.9,
+    "final": 2160.9
+  }
+}
